@@ -12,3 +12,5 @@
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+    - NOTE: If http://0.0.0.0:3001/ does not work, try http://127.0.0.1:3001/
