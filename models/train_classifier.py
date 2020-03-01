@@ -24,34 +24,16 @@ from sklearn.tree import DecisionTreeClassifier
 
 nltk.download(['punkt', 'wordnet', 'averaged_perceptron_tagger'])
 
-# Custom Transformer
-class StartingVerbExtractor(BaseEstimator, TransformerMixin):
-
-    def starting_verb(self, text):
-        sentence_list = nltk.sent_tokenize(text)
-        for sentence in sentence_list:
-            pos_tags = nltk.pos_tag(tokenize(sentence))
-            first_word, first_tag = pos_tags[0]
-            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
-                return True
-        return False
-
-    def fit(self, x, y=None):
-        return self
-
-    def transform(self, X):
-        X_tagged = pd.Series(X).apply(self.starting_verb)
-        return pd.DataFrame(X_tagged)
-
 # Load Data and set feature (y) and target (X) variables
 def load_data(database_filepath):
     # load data from database
     cwd = os.getcwd()  # gets current working directory
     dbwd = cwd.replace('/models', '/data/').replace('\\models', '\\data\\')
     engine = create_engine('sqlite:///' + dbwd + database_filepath)
+    df = pd.read_sql("SELECT * FROM Messages_Categories_Cleaned", engine)
 
-    X = df.message.values
-    Y = df.iloc[:, 4:].values
+    X = df.message
+    Y = df.iloc[:, 4:]
     category_names = Y.columns
 
     return X, Y, category_names
@@ -82,22 +64,14 @@ def tokenize(text):
 # Build model
 def build_model():
     pipeline = Pipeline([
-        ('features', FeatureUnion([
-
-            ('text_pipeline', Pipeline([
-                ('vect', CountVectorizer(tokenizer=tokenize)),
-                ('tfidf', TfidfTransformer())
-            ])),
-
-            ('starting_verb', StartingVerbExtractor())
-        ])),
-
+        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
 
     # specify parameters for grid search
-    parameters = {'clf__estimator__max_depth': [10, 50, None],
-                  'features__text_pipeline__vect__ngram_range': ((1, 1), (1, 2))}
+    parameters = {'clf__estimator__max_depth': [10, 20, None],
+                  'clf__estimator__min_samples_leaf':[2, 5, 10]}
 
     # create grid search object
     model = GridSearchCV(pipeline, param_grid=parameters, verbose=1)
@@ -106,9 +80,16 @@ def build_model():
 
 # Evaluate model -> Find out what this function should do
 def evaluate_model(model, X_test, Y_test, category_names):
+    # Get results using classification_report; add to a dataframe.
     y_pred = model.predict(X_test)
-
-    ##### PUT CLASSIFICATION REPORT HERE
+    for col1, col2 in zip(targets.T, pred_classes.T):
+        # print("col1: ", col1)
+        # print("col2: ", col2)
+        print("Category: ", target_names[count])
+        print("================================")
+        print(classification_report(y_true=col1, y_pred=col2))
+        print("================================")
+        count += 1
 
 # Save model as pickle file
 def save_model(model, model_filepath):
