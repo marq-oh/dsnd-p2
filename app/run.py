@@ -50,7 +50,7 @@ def index():
     # converting to pandas series to use value_counts
     categories = categories.apply(pd.Series.value_counts)
 
-    # Remove all NaN from categories data and change 2 = 1
+    # Remove all NaN from categories data
     categories = categories.fillna(0)
 
     # Divide data
