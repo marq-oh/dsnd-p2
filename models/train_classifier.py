@@ -78,7 +78,7 @@ def build_model():
 
     return model
 
-# Evaluate model -> Find out what this function should do
+# Evaluate model
 def evaluate_model(model, X_test, Y_test, category_names):
     # Get results using classification_report; add to a dataframe.
     y_pred = model.predict(X_test)
