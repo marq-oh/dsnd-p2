@@ -1,16 +1,5 @@
-# Disaster Response Pipeline Project
+### Disaster Response Pipeline Project - Second project for Data Science course
+-----
+Second project for Data Science course. The intent of the project was to demonstrate learnings in creating a Machine Learning Pipeline that involves reading data from a .csv, storing the data in a database, training a classifier model, saving the model and then using the model in pre-built application to display the data.
 
-### Instructions:
-1. Run the following commands in the project's root directory to set up your database and model.
-
-    - To run ETL pipeline that cleans data and stores in database
-        `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
-    - To run ML pipeline that trains classifier and saves
-        `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
-
-2. Run the following command in the app's directory to run your web app.
-    `python run.py`
-
-3. Go to http://0.0.0.0:3001/
-
-    - NOTE: If http://0.0.0.0:3001/ does not work, try http://127.0.0.1:3001/
+The original instructions are in [Original_Instructions.md](https://github.com/marq-oh/dsnd-p2/blob/master/Original_Instructions.md)
